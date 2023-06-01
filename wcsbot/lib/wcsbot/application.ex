@@ -49,9 +49,9 @@ defmodule Wcsbot.Application do
   end
 
   defp discord_token do
-    # Application.fetch_env!(:discord, :token)
-    # "e9511491512bd407a1bf60b377916cde96816010446403ca2010c78e0335bb1d"
-    "MTExMzg4MTM5NjE1OTcxMzQzMg.GW143Z.cc7Ros-EKKOu-dAU52intGKRbXAo70Qb8IdPVE"
+    # Application.fetch_env!(:wcsbot, :token)
+    System.fetch_env!("TOKEN")
+    |> IO.inspect(label: "token :: ")
   end
 
   defp load_modules do

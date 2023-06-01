@@ -4,6 +4,16 @@ defmodule Wcsbot.Commands do
   require Alchemy.Embed
 
   Cogs.def ping do
-    Cogs.say "pong!"
+    IO.inspect("receiving some ping")
+    Cogs.say "pong !!"
   end
+
+  Cogs.def echo do
+    Cogs.say "please give me a word to echo"
+  end
+
+  Cogs.def echo(word) do
+    Cogs.say word
+  end
+
 end

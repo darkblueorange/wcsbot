@@ -24,3 +24,6 @@ wcsbot-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Exec script with TOKEN in it
+run_discord_bot.sh
