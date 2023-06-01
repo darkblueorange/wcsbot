@@ -24,34 +24,26 @@ defmodule Wcsbot.Application do
   use Application
 
   def start(_type, _args) do
-    if discord_active?() do
 
       IO.inspect("discord active", label: "we are here ")
+      children = [
+        Wcsbot.Repo
+      ]
 
-      run = Alchemy.Client.start(discord_token())
+      # run =
+      Alchemy.Client.start(discord_token())
       |> IO.inspect(label: "RUN RESULT :: ")
       load_modules()
       # We supply this to satisfy the application callback
-      run
-    else
-      IO.inspect("discord not active", label: "we are here ")
+      # run
+
 
       opts = [strategy: :one_for_one, name: Wcsbot.Supervisor]
-      Supervisor.start_link([], opts)
-    end
-  end
-
-  defp discord_active? do
-    :wcsbot
-    |> Application.get_env(:active, false)
-    # |> WannabeBool.to_boolean()
-    true
+      Supervisor.start_link(children, opts)
   end
 
   defp discord_token do
-    # Application.fetch_env!(:wcsbot, :token)
     System.fetch_env!("TOKEN")
-    |> IO.inspect(label: "token :: ")
   end
 
   defp load_modules do
