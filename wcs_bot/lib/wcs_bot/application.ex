@@ -22,6 +22,10 @@ defmodule WcsBot.Application do
       # {WcsBot.Worker, arg}
     ]
 
+    Alchemy.Client.start(discord_token())
+      |> IO.inspect(label: "RUN RESULT :: ")
+    load_modules()
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: WcsBot.Supervisor]
@@ -34,5 +38,13 @@ defmodule WcsBot.Application do
   def config_change(changed, _new, removed) do
     WcsBotWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp discord_token do
+    System.fetch_env!("TOKEN")
+  end
+
+  defp load_modules do
+    use Wcsbot.Commands
   end
 end

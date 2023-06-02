@@ -32,6 +32,7 @@ defmodule WcsBot.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:alchemy, "~> 0.7.0", hex: :discord_alchemy},
       {:phoenix, "~> 1.7.3"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
