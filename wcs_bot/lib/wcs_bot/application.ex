@@ -23,7 +23,6 @@ defmodule WcsBot.Application do
     ]
 
     Alchemy.Client.start(discord_token())
-      |> IO.inspect(label: "RUN RESULT :: ")
     load_modules()
 
     # See https://hexdocs.pm/elixir/Supervisor.html

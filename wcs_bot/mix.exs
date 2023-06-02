@@ -7,6 +7,8 @@ defmodule WcsBot.MixProject do
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
+      # https://github.com/elixir-lsp/vscode-elixir-ls
+      elixirc_options: [debug_info: Mix.env() == :dev],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -33,6 +35,8 @@ defmodule WcsBot.MixProject do
   defp deps do
     [
       {:alchemy, "~> 0.7.0", hex: :discord_alchemy},
+      # {:credo, "~>0.8.3"},
+      {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
       {:phoenix, "~> 1.7.3"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},

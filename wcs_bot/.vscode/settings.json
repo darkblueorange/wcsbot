@@ -1,0 +1,11 @@
+{
+    // https://github.com/elixir-lsp/vscode-elixir-ls
+    "editor.minimap.enabled": false,
+    "editor.renderControlCharacters": true,
+    "editor.renderWhitespace": "all",
+    "editor.formatOnSave": true,
+    "emmet.includeLanguages": {
+        "html-eex": "html"
+    },
+    "elixirLS.enableTestLenses": true
+}

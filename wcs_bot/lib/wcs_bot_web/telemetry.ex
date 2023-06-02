@@ -1,4 +1,7 @@
 defmodule WcsBotWeb.Telemetry do
+  @moduledoc """
+  Telemetry Module. Not actually used.
+  """
   use Supervisor
   import Telemetry.Metrics
 
