@@ -14,6 +14,7 @@
       # "default" is used.
       #
       name: "default",
+      # elixir: %{credo: %{executePath: "/usr/local/bin/mix"}},
       #
       # These are the files included in the analysis:
       files: %{
