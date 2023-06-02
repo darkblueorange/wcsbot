@@ -1,5 +1,6 @@
 defmodule WcsBotWeb.Router do
   use WcsBotWeb, :router
+  import Phoenix.LiveView.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -18,6 +19,15 @@ defmodule WcsBotWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    # live_session :default do
+      live "/dance_schools", DanceSchoolLive.Index, :index
+      live "/dance_schools/new", DanceSchoolLive.Index, :new
+      live "/dance_schools/:id/edit", DanceSchoolLive.Index, :edit
+
+      live "/dance_schools/:id", DanceSchoolLive.Show, :show
+      live "/dance_schools/:id/show/edit", DanceSchoolLive.Show, :edit
+    # end
   end
 
   # Other scopes may use custom stacks.

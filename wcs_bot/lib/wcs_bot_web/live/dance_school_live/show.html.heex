@@ -1,0 +1,29 @@
+<.header>
+  Dance school <%= @dance_school.id %>
+  <:subtitle>This is a dance_school record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/dance_schools/#{@dance_school}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit dance_school</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @dance_school.name %></:item>
+  <:item title="City"><%= @dance_school.city %></:item>
+  <:item title="Country"><%= @dance_school.country %></:item>
+  <:item title="Boss"><%= @dance_school.boss %></:item>
+</.list>
+
+<.back navigate={~p"/dance_schools"}>Back to dance_schools</.back>
+
+<.modal :if={@live_action == :edit} id="dance_school-modal" show on_cancel={JS.patch(~p"/dance_schools/#{@dance_school}")}>
+  <.live_component
+    module={WcsBotWeb.DanceSchoolLive.FormComponent}
+    id={@dance_school.id}
+    title={@page_title}
+    action={@live_action}
+    dance_school={@dance_school}
+    patch={~p"/dance_schools/#{@dance_school}"}
+  />
+</.modal>

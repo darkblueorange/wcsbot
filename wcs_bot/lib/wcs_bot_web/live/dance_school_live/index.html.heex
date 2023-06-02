@@ -1,0 +1,46 @@
+<.header>
+  Listing Dance schools
+  <:actions>
+    <.link patch={~p"/dance_schools/new"}>
+      <.button>New Dance school</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="dance_schools"
+  rows={@streams.dance_schools}
+  row_click={fn {_id, dance_school} -> JS.navigate(~p"/dance_schools/#{dance_school}") end}
+>
+  <:col :let={{_id, dance_school}} label="Name"><%= dance_school.name %></:col>
+  <:col :let={{_id, dance_school}} label="City"><%= dance_school.city %></:col>
+  <:col :let={{_id, dance_school}} label="Country"><%= dance_school.country %></:col>
+  <:col :let={{_id, dance_school}} label="Boss"><%= dance_school.boss %></:col>
+  <:action :let={{_id, dance_school}}>
+    <div class="sr-only">
+      <.link navigate={~p"/dance_schools/#{dance_school}"}>Show</.link>
+    </div>
+    <.link patch={~p"/dance_schools/#{dance_school}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, dance_school}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: dance_school.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="dance_school-modal" show on_cancel={JS.patch(~p"/dance_schools")}>
+  <.live_component
+    module={WcsBotWeb.DanceSchoolLive.FormComponent}
+    id={@dance_school.id || :new}
+    title={@page_title}
+    action={@live_action}
+    dance_school={@dance_school}
+    patch={~p"/dance_schools"}
+  />
+</.modal>
+
+<span><.link navigate={WcsBotWeb.Router.Helpers.page_path(@socket, :home)}>Accueil</.link></span>
