@@ -24,7 +24,6 @@ defmodule WcsBotWeb do
       # use Phoenix.Router, helpers: false
       use Phoenix.Router, helpers: true
 
-
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
       import Phoenix.Controller

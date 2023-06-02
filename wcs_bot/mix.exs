@@ -4,7 +4,18 @@ defmodule WcsBot.MixProject do
   def project do
     [
       app: :wcs_bot,
-      version: "0.1.0",
+      version: "0.1.0-dev",
+      name: "WCS Bot",
+      source_url: "https://github.com/darkblueorange/wcsbot",
+      # homepage_url: "http://YOUR_PROJECT_HOMEPAGE",
+      homepage_url: "http://localhost:4001/",
+      docs: [
+        # The main page in the docs
+        main: "WcsBot",
+        output: "priv/static",
+        # logo: "path/to/logo.png",
+        extras: ["README.md"]
+      ],
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       # https://github.com/elixir-lsp/vscode-elixir-ls
@@ -40,7 +51,8 @@ defmodule WcsBot.MixProject do
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
       {:ecto_sql, "~> 3.10"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
-      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      # {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:finch, "~> 0.13"},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.20"},

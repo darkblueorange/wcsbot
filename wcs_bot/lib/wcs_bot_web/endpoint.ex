@@ -13,15 +13,21 @@ defmodule WcsBotWeb.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
+  # Serve at "/docs" the static files from "priv/static/doc" directory. After running mix docs, you should move the "doc" repo under priv/static.
+  plug Plug.Static, at: "/docs", from: {:wcs_bot, "priv/static/doc"}, gzip: false
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest
   # when deploying your static files in production.
+
   plug Plug.Static,
     at: "/",
     from: :wcs_bot,
     gzip: false,
     only: WcsBotWeb.static_paths()
+
+  # if Mix.env() == :dev do
+  # end
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
