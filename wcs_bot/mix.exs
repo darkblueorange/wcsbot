@@ -12,7 +12,7 @@ defmodule WcsBot.MixProject do
       docs: [
         # The main page in the docs
         main: "WcsBot",
-        output: "priv/static",
+        output: "priv/static/doc",
         # logo: "path/to/logo.png",
         extras: ["README.md"]
       ],
