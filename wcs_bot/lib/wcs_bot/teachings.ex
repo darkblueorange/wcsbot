@@ -21,6 +21,12 @@ defmodule WcsBot.Teachings do
     Repo.all(DanceSchool)
   end
 
+  def list_dance_schools(country) do
+    DanceSchool
+    |> where([dc], dc.country == ^country)
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single dance_school.
 
