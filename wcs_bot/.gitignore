@@ -35,3 +35,7 @@ wcs_bot-*.tar
 npm-debug.log
 /assets/node_modules/
 
+
+# Exec script with TOKEN in it
+run_discord_bot.sh
+
