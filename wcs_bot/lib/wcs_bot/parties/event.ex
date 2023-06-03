@@ -45,7 +45,7 @@ defmodule WcsBot.Parties.Event do
       :address,
       :country,
       :lineup,
-      :description,
+      # :description,
       :url_event,
       :wcsdc
     ])

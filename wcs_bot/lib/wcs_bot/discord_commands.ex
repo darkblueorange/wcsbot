@@ -100,7 +100,8 @@ defmodule Wcsbot.Commands do
   end
 
   Cogs.def schools("add_school", "help") do
-    "!schools add_school name: XXX boss: YYY city: AAA country: BBB"
+    "!schools add_school name: XXX, boss: YYY, city: AAA, country: BBB\n
+    (don't forget the commas!)"
     |> Cogs.say()
   end
 
@@ -197,11 +198,40 @@ defmodule Wcsbot.Commands do
     end
   end
 
+  Cogs.def events("add_event", "help") do
+    "!events add_event name: XXX, begin_date: yyyy-dd-mm, end_date: yyyy-dd-mm, country: CCC, lineup: LLL, url_event: https://blabla, address: AAA, wcsdc: true/false\n
+    (don't forget the commas!)"
+    |> Cogs.say()
+  end
+
+  Cogs.def events("add_event", event) do
+    event
+    |> String.split(~r/ ?, ?/)
+    |> Enum.reduce(%{}, fn token, map_acc ->
+      [field, data_value] =
+        token
+        |> String.split(~r/(?<!https|http): ?/)
+
+      map_acc
+      |> Map.put(field, data_value)
+    end)
+    |> Parties.create_event()
+    |> case do
+      {:ok, event} ->
+        "#{event.name} created !" |> Cogs.say()
+
+      {:error, %Ecto.Changeset{errors: [{attribute, {error_message, _}} | _]}} ->
+        "Couldn't insert this Event because #{attribute} #{inspect(error_message)}"
+        |> Cogs.say()
+    end
+  end
+
   @doc """
   Assign specific parser to each Discord command.
 
   """
   Cogs.set_parser(:schools, &Wcsbot.Commands.school_parser/1)
+  Cogs.set_parser(:events, &Wcsbot.Commands.event_parser/1)
 
   @doc """
   Returns a list of parsed tokens from the user input message.
@@ -223,4 +253,14 @@ defmodule Wcsbot.Commands do
 
   # Garbage collector
   def school_parser(message), do: message |> String.split()
+
+  def event_parser("add_event"), do: ["add_event"]
+  def event_parser("help"), do: ["help"]
+
+  def event_parser("add_event " <> message) do
+    ["add_event", message]
+  end
+
+  # Garbage collector
+  def event_parser(message), do: message |> String.split()
 end
