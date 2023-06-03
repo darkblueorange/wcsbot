@@ -112,6 +112,14 @@ defmodule Wcsbot.Commands do
       |> Map.put(field, data_value)
     end)
     |> Teachings.create_dance_school()
+    |> case do
+      {:ok, dance_school} ->
+        "#{dance_school.name} created !" |> Cogs.say()
+
+      {:error, %Ecto.Changeset{errors: [{attribute, {error_message, _}} | _]}} ->
+        "Couldn't insert this Dance School because #{attribute} #{inspect(error_message)}"
+        |> Cogs.say()
+    end
   end
 
   Cogs.def(schools("[options]", _), do: nil)
