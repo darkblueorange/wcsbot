@@ -138,6 +138,11 @@
             ) %>
           </li>
           <li>
+            <%= Phoenix.HTML.Link.link("Events",
+              to: WcsBotWeb.Router.Helpers.event_index_path(@conn, :index)
+            ) %>
+          </li>
+          <li>
             <%= Phoenix.HTML.Link.link("Technical Doc",
               to: WcsBotWeb.Router.Helpers.static_path(@conn, "/docs/index.html")
             ) %>

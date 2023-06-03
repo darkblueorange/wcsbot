@@ -21,13 +21,19 @@ defmodule WcsBotWeb.Router do
     get "/", PageController, :home
 
     # live_session :default do
-      live "/dance_schools", DanceSchoolLive.Index, :index
-      live "/dance_schools/new", DanceSchoolLive.Index, :new
-      live "/dance_schools/:id/edit", DanceSchoolLive.Index, :edit
+    live "/dance_schools", DanceSchoolLive.Index, :index
+    live "/dance_schools/new", DanceSchoolLive.Index, :new
+    live "/dance_schools/:id/edit", DanceSchoolLive.Index, :edit
 
-      live "/dance_schools/:id", DanceSchoolLive.Show, :show
-      live "/dance_schools/:id/show/edit", DanceSchoolLive.Show, :edit
+    live "/dance_schools/:id", DanceSchoolLive.Show, :show
+    live "/dance_schools/:id/show/edit", DanceSchoolLive.Show, :edit
     # end
+    live "/events", EventLive.Index, :index
+    live "/events/new", EventLive.Index, :new
+    live "/events/:id/edit", EventLive.Index, :edit
+
+    live "/events/:id", EventLive.Show, :show
+    live "/events/:id/show/edit", EventLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

@@ -1,0 +1,56 @@
+<.header>
+  Listing Events
+  <:actions>
+    <.link patch={~p"/events/new"}>
+      <.button>New Event</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="events"
+  rows={@streams.events}
+  row_click={fn {_id, event} -> JS.navigate(~p"/events/#{event}") end}
+>
+  <:col :let={{_id, event}} label="Name"><%= event.name %></:col>
+  <:col :let={{_id, event}} label="Begin date"><%= event.begin_date %></:col>
+  <:col :let={{_id, event}} label="End date"><%= event.end_date %></:col>
+  <:col :let={{_id, event}} label="Address"><%= event.address %></:col>
+  <:col :let={{_id, event}} label="Country"><%= event.country %></:col>
+  <:col :let={{_id, event}} label="Lineup"><%= event.lineup %></:col>
+  <:col :let={{_id, event}} label="Description"><%= event.description %></:col>
+  <:col :let={{_id, event}} label="Url event"><%= event.url_event %></:col>
+  <:col :let={{_id, event}} label="Wcsdc"><%= event.wcsdc %></:col>
+  <:action :let={{_id, event}}>
+    <div class="sr-only">
+      <.link navigate={~p"/events/#{event}"}>Show</.link>
+    </div>
+    <.link patch={~p"/events/#{event}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, event}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: event.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="event-modal"
+  show
+  on_cancel={JS.patch(~p"/events")}
+>
+  <.live_component
+    module={WcsBotWeb.EventLive.FormComponent}
+    id={@event.id || :new}
+    title={@page_title}
+    action={@live_action}
+    event={@event}
+    patch={~p"/events"}
+  />
+</.modal>
+
+<span><.link navigate={WcsBotWeb.Router.Helpers.page_path(@socket, :home)}>Accueil</.link></span>

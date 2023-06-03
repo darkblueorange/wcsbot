@@ -14,6 +14,8 @@ defmodule WcsBot.Teachings.DanceSchool do
     field :country, :string
     field :name, :string
 
+    has_many(:events, WcsBot.Parties.Event)
+
     timestamps()
   end
 
