@@ -6,7 +6,7 @@ defmodule WcsBotWeb.EventLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :events, Parties.list_events())}
+    {:ok, stream(socket, :events, Parties.list_events_with_preload())}
   end
 
   @impl true

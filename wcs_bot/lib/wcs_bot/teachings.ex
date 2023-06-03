@@ -27,6 +27,12 @@ defmodule WcsBot.Teachings do
     |> Repo.all()
   end
 
+  def list_dance_schools_tuple_form do
+    DanceSchool
+    |> select([dc], {dc.name, dc.id})
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single dance_school.
 

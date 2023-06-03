@@ -2,9 +2,14 @@ defmodule WcsBotWeb.EventLive.FormComponent do
   use WcsBotWeb, :live_component
 
   alias WcsBot.Parties
+  alias WcsBot.Teachings
 
   @impl true
   def render(assigns) do
+    assigns =
+      assigns
+      |> assign(:dance_schools, Teachings.list_dance_schools_tuple_form())
+
     ~H"""
     <div>
       <.header>
@@ -27,6 +32,13 @@ defmodule WcsBotWeb.EventLive.FormComponent do
         <.input field={@form[:lineup]} type="text" label="Lineup" />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:url_event]} type="text" label="Url event" />
+        <.input
+          field={@form[:dance_school_id]}
+          type="select"
+          options={@dance_schools}
+          prompt="Bind the event to a Dance School"
+          label="Dance schools"
+        />
         <.input field={@form[:wcsdc]} type="checkbox" label="Wcsdc" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Event</.button>

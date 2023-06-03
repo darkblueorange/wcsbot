@@ -21,6 +21,12 @@ defmodule WcsBot.Parties do
     Repo.all(Event)
   end
 
+  def list_events_with_preload do
+    Event
+    |> Repo.all()
+    |> Repo.preload([:dance_school])
+  end
+
   @doc """
   Gets a single event.
 
