@@ -22,5 +22,6 @@ defmodule WcsBot.Teachings.DanceSchool do
     dance_school
     |> cast(attrs, [:name, :city, :country, :boss])
     |> validate_required([:name, :city, :country, :boss])
+    |> unique_constraint(:name)
   end
 end
