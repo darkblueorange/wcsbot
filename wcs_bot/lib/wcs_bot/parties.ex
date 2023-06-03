@@ -21,6 +21,25 @@ defmodule WcsBot.Parties do
     Repo.all(Event)
   end
 
+  def list_future_events do
+    Event
+    |> where([ev], fragment(" ? > CURRENT_DATE", ev.end_date))
+    |> Repo.all()
+  end
+
+  def list_events_by_country(country) do
+    Event
+    |> where([ev], ev.country == ^country)
+    |> Repo.all()
+  end
+
+  def list_future_events_by_country(country) do
+    Event
+    |> where([ev], ev.country == ^country)
+    |> where([ev], fragment(" ? > CURRENT_DATE", ev.end_date))
+    |> Repo.all()
+  end
+
   def list_events_with_preload do
     Event
     |> Repo.all()
