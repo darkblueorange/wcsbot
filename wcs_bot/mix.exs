@@ -8,7 +8,7 @@ defmodule WcsBot.MixProject do
       name: "WCS Bot",
       source_url: "https://github.com/darkblueorange/wcsbot",
       # homepage_url: "http://YOUR_PROJECT_HOMEPAGE",
-      homepage_url: "http://localhost:4001/",
+      homepage_url: "http://localhost:4000/",
       docs: [
         # The main page in the docs
         main: "WcsBot",

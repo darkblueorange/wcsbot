@@ -21,7 +21,7 @@ defmodule WcsBot.Teachings do
     Repo.all(DanceSchool)
   end
 
-  def list_dance_schools(country) do
+  def list_dance_schools_by_country(country) do
     DanceSchool
     |> where([dc], dc.country == ^country)
     |> Repo.all()

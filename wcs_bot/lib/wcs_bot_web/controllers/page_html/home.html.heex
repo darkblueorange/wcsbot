@@ -62,7 +62,7 @@
       <div class="w-full sm:w-auto">
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
           <a
-            href="https://hexdocs.pm/phoenix/overview.html"
+            href={@href_link}
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
           >
             <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -130,13 +130,19 @@
             </span>
           </a>
         </div>
-        toto <%= Phoenix.HTML.Link.link("Dance schools",
-          to: WcsBotWeb.Router.Helpers.dance_school_index_path(@conn, :index)
-        ) %>
-
-        <%= Phoenix.HTML.Link.link("Technical Doc",
-          to: WcsBotWeb.Router.Helpers.static_path(@conn, "/docs/index.html")
-        ) %>
+        toto <br />
+        <ul>
+          <li>
+            <%= Phoenix.HTML.Link.link("Dance schools",
+              to: WcsBotWeb.Router.Helpers.dance_school_index_path(@conn, :index)
+            ) %>
+          </li>
+          <li>
+            <%= Phoenix.HTML.Link.link("Technical Doc",
+              to: WcsBotWeb.Router.Helpers.static_path(@conn, "/docs/index.html")
+            ) %>
+          </li>
+        </ul>
 
         <div class="mt-10 grid grid-cols-1 gap-y-4 text-sm leading-6 text-zinc-700 sm:grid-cols-2">
           <div>

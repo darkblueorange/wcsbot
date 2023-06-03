@@ -1,5 +1,5 @@
 defmodule WcsBot.Teachings.DanceSchool do
-    @moduledoc """
+  @moduledoc """
   DanceSchool schema. Represents a dance school.
   Will be linked to a Studio soon.
 
