@@ -23,6 +23,8 @@ defmodule WcsBot.Application do
       # {WcsBot.Worker, arg}
     ]
 
+    WcsBot.DiscordCommand.register_command()
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: WcsBot.Supervisor]

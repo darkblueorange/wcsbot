@@ -5,22 +5,17 @@ defmodule WcsBot.Consumer do
   Catch the events and dispatch them, to the WcsBot.Command Module.
   """
   use Nostrum.Consumer
-
-  alias WcsBot.Command
-  # alias Nostrum.Api
+  alias WcsBot.DiscordCommand
 
   def handle_event({:MESSAGE_CREATE, msg, _ws_state}) do
-    Command.handle(msg)
-    # msg
-    # |> IO.inspect(label: ":: message received :: ")
+    DiscordCommand.handle_msg(msg)
+  end
 
-    # case msg.content do
-    #   "!hello" ->
-    #     Api.create_message(msg.channel_id, "world!")
+  alias Nostrum.Struct.Interaction
 
-    #   _anything ->
-    #     :ignore
-    # end
+  def handle_event({:INTERACTION_CREATE, %Interaction{} = interaction, _ws_state}) do
+    interaction
+    |> DiscordCommand.handle_interaction()
   end
 
   def handle_event(_event) do
