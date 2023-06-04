@@ -1,4 +1,4 @@
-defmodule WcsBot.Command.Docs do
+defmodule WcsBot.DiscordCommand.Docs do
   @moduledoc """
   Discord Docs Command Module.
 

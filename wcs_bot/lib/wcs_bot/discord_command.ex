@@ -4,8 +4,8 @@ defmodule WcsBot.DiscordCommand do
 
   Will contain every bot command available to user (and admin) in Discord.
   """
-  alias WcsBot.Command.Docs
-  alias WcsBot.DiscordCommand.Schools
+  alias WcsBot.DiscordCommand.Docs
+  alias WcsBot.DiscordCommand.{ChitChat, Schools}
   alias Nostrum.Api
 
   @prefix "!"
@@ -19,7 +19,7 @@ defmodule WcsBot.DiscordCommand do
     content
     |> String.trim()
     |> String.split(" ", parts: 2)
-    |> execute(msg)
+    |> ChitChat.answer(msg)
   end
 
   def handle_msg(_), do: :noop
@@ -47,45 +47,56 @@ defmodule WcsBot.DiscordCommand do
   defp find_country([_, %{name: "country", value: country}]), do: country
   defp find_country(_), do: false
 
-  defp execute(["ping"], msg) do
-    "pong"
-    |> create_message(msg.channel_id)
-  end
-
-  defp execute(["echo"], msg) do
-    "Give me something to echo"
-    |> create_message(msg.channel_id)
-  end
-
-  defp execute(["echo", to_echo], msg) do
-    to_echo |> create_message(msg.channel_id)
-  end
-
-  defp execute(["docs", module_name], msg) do
-    Docs.get_docs(module_name)
-    |> create_message(msg.channel_id)
-  end
-
-  defp execute(_, msg) do
-    "This command doesnt exist, sorry"
-    |> create_message(msg.channel_id)
-  end
-
   def create_message(message, channel_id) do
     channel_id
     |> Api.create_message(message)
   end
 
+  @doc """
+  Registers business commands.
+  Actually registers school_list and school_add.
+
+  """
   def register_command() do
     Nostrum.Api.create_guild_application_command(
       @guild_id,
-      Schools.create_command("school_list")
+      Schools.create_discord_command("school_list")
     )
 
     Nostrum.Api.create_guild_application_command(
       @guild_id,
-      Schools.create_command("school_add")
+      Schools.create_discord_command("school_add")
     )
+  end
+end
+
+defmodule WcsBot.DiscordCommand.ChitChat do
+  @moduledoc """
+  Basic Chitchat for "nothing".
+
+  """
+  def answer(["ping"], msg) do
+    "pong"
+    |> create_message(msg.channel_id)
+  end
+
+  def answer(["echo"], msg) do
+    "Give me something to echo"
+    |> create_message(msg.channel_id)
+  end
+
+  def answer(["echo", to_echo], msg) do
+    to_echo |> create_message(msg.channel_id)
+  end
+
+  def answer(["docs", module_name], msg) do
+    Docs.get_docs(module_name)
+    |> create_message(msg.channel_id)
+  end
+
+  def answer(_, msg) do
+    "This command doesnt exist, sorry"
+    |> create_message(msg.channel_id)
   end
 end
 
@@ -101,7 +112,7 @@ defmodule WcsBot.DiscordCommand.Schools do
   @application_command_type_string 3
   @application_command_type_boolean 5
 
-  def create_command("school_list") do
+  def create_discord_command("school_list") do
     %{
       name: "school_list",
       description: "Lists a dance school. ",
@@ -122,7 +133,7 @@ defmodule WcsBot.DiscordCommand.Schools do
     }
   end
 
-  def create_command("school_add") do
+  def create_discord_command("school_add") do
     %{
       name: "school_add",
       description: "Adds a dance school. ",
