@@ -8,7 +8,7 @@ defmodule WcsBot.Command.Docs do
   def get_docs(module_name) do
     {:docs_v1, _, :elixir, _, %{"en" => module_doc}, _, _} =
       module_name
-      |> String.capitalize()
+      # |> String.capitalize() # does not work -_-
       |> modularize
       |> Code.fetch_docs()
 
