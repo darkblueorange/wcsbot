@@ -45,18 +45,16 @@ defmodule WcsBot.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:alchemy, "~> 0.7.0", hex: :discord_alchemy},
-      # {:credo, "~>0.8.3"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
       {:ecto_sql, "~> 3.10"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
-      # {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:finch, "~> 0.13"},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.4"},
+      {:nostrum, "~> 0.8"},
       {:phoenix, "~> 1.7.3"},
       {:phoenix_ecto, "~> 4.4"},
       {:postgrex, ">= 0.0.0"},

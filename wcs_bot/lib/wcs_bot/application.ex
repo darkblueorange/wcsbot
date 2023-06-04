@@ -17,13 +17,11 @@ defmodule WcsBot.Application do
       # Start Finch
       {Finch, name: WcsBot.Finch},
       # Start the Endpoint (http/https)
-      WcsBotWeb.Endpoint
+      WcsBotWeb.Endpoint,
+      {WcsBot.Consumer, []}
       # Start a worker by calling: WcsBot.Worker.start_link(arg)
       # {WcsBot.Worker, arg}
     ]
-
-    Alchemy.Client.start(discord_token())
-    load_modules()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -37,13 +35,5 @@ defmodule WcsBot.Application do
   def config_change(changed, _new, removed) do
     WcsBotWeb.Endpoint.config_change(changed, removed)
     :ok
-  end
-
-  defp discord_token do
-    System.fetch_env!("TOKEN")
-  end
-
-  defp load_modules do
-    use Wcsbot.Commands
   end
 end

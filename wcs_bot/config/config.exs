@@ -54,10 +54,15 @@ config :tailwind,
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: [:request_id, :shard, :guild, :channel]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :nostrum,
+  # The token of your bot as a string (generated in Discord app panel)
+  token: System.get_env("BOT_TOKEN"),
+  gateway_intents: [:message_content, :guilds, :guild_messages, :direct_messages]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
