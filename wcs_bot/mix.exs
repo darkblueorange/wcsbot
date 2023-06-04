@@ -5,7 +5,7 @@ defmodule WcsBot.MixProject do
     [
       app: :wcs_bot,
       version: "0.1.0-dev",
-      name: "WCS Bot",
+      name: "WcsBot",
       source_url: "https://github.com/darkblueorange/wcsbot",
       # homepage_url: "http://YOUR_PROJECT_HOMEPAGE",
       homepage_url: "http://localhost:4000/",

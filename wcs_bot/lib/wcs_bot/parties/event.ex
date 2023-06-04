@@ -43,11 +43,7 @@ defmodule WcsBot.Parties.Event do
       :begin_date,
       :end_date,
       :address,
-      :country,
-      :lineup,
-      # :description,
-      :url_event,
-      :wcsdc
+      :country
     ])
     |> foreign_key_constraint(:dance_school_id)
   end
