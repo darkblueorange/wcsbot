@@ -150,6 +150,25 @@ defmodule WcsBot.Parties do
     |> Repo.preload(:dance_school)
   end
 
+  def list_future_small_parties do
+    SmallParty
+    |> where([sp], fragment(" ? > CURRENT_DATE", sp.end_date))
+    |> Repo.all()
+  end
+
+  def list_small_parties_by_country(country) do
+    SmallParty
+    |> where([sp], sp.country == ^country)
+    |> Repo.all()
+  end
+
+  def list_future_small_parties_by_country(country) do
+    SmallParty
+    |> where([sp], sp.country == ^country)
+    |> where([sp], fragment(" ? > CURRENT_DATE", sp.end_date))
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single small_party.
 

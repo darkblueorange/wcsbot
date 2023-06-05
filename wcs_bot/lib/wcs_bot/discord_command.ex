@@ -4,7 +4,7 @@ defmodule WcsBot.DiscordCommand do
 
   Will contain every bot command available to user (and admin) in Discord.
   """
-  alias WcsBot.DiscordCommand.{ChitChat, Schools, Events}
+  alias WcsBot.DiscordCommand.{ChitChat, Schools, Events, Parties}
   alias Nostrum.Api
 
   @prefix "!"
@@ -40,6 +40,14 @@ defmodule WcsBot.DiscordCommand do
     })
   end
 
+  def handle_interaction(%{data: %{name: "party_list"}} = interaction) do
+    Parties.list_parties(%{
+      interaction: interaction,
+      with_details: find_details(interaction.data.options),
+      with_country: find_country(interaction.data.options)
+    })
+  end
+
   def handle_interaction(%{data: %{name: "school_add"}} = interaction) do
     Schools.add_school(%{
       interaction: interaction,
@@ -49,6 +57,13 @@ defmodule WcsBot.DiscordCommand do
 
   def handle_interaction(%{data: %{name: "event_add"}} = interaction) do
     Events.add_event(%{
+      interaction: interaction,
+      data: interaction.data
+    })
+  end
+
+  def handle_interaction(%{data: %{name: "party_add"}} = interaction) do
+    Parties.add_party(%{
       interaction: interaction,
       data: interaction.data
     })
@@ -113,32 +128,42 @@ defmodule WcsBot.DiscordCommand do
 
   """
   def register_command() do
-    Nostrum.Api.get_guild_application_commands(@guild_id)
-    |> elem(1)
-    |> Enum.each(fn app_cmd ->
-      app_cmd.application_id
-      |> Nostrum.Api.delete_guild_application_command(app_cmd.guild_id, app_cmd.id)
-    end)
+    # Nostrum.Api.get_guild_application_commands(@guild_id)
+    # |> elem(1)
+    # |> Enum.each(fn app_cmd ->
+    #   app_cmd.application_id
+    #   |> Nostrum.Api.delete_guild_application_command(app_cmd.guild_id, app_cmd.id)
+    # end)
 
-    Nostrum.Api.create_guild_application_command(
-      @guild_id,
-      Schools.create_discord_command("school_list")
-    )
+    # Nostrum.Api.create_guild_application_command(
+    #   @guild_id,
+    #   Schools.create_discord_command("school_list")
+    # )
 
-    Nostrum.Api.create_guild_application_command(
-      @guild_id,
-      Events.create_discord_command("event_list")
-    )
+    # Nostrum.Api.create_guild_application_command(
+    #   @guild_id,
+    #   Events.create_discord_command("event_list")
+    # )
 
-    Nostrum.Api.create_guild_application_command(
-      @guild_id,
-      Schools.create_discord_command("school_add")
-    )
+    # Nostrum.Api.create_guild_application_command(
+    #   @guild_id,
+    #   Parties.create_discord_command("party_list")
+    # )
 
-    Nostrum.Api.create_guild_application_command(
-      @guild_id,
-      Events.create_discord_command("event_add")
-    )
+    # Nostrum.Api.create_guild_application_command(
+    #   @guild_id,
+    #   Schools.create_discord_command("school_add")
+    # )
+
+    # Nostrum.Api.create_guild_application_command(
+    #   @guild_id,
+    #   Events.create_discord_command("event_add")
+    # )
+
+    # Nostrum.Api.create_guild_application_command(
+    #   @guild_id,
+    #   Parties.create_discord_command("party_add")
+    # )
   end
 end
 
@@ -450,6 +475,181 @@ defmodule WcsBot.DiscordCommand.Events do
 
       {:error, %Ecto.Changeset{errors: [{attribute, {error_message, _}} | _]}} ->
         "Couldn't insert this Event because #{attribute} #{inspect(error_message)}"
+        |> DiscordCommand.create_interaction_response(interaction)
+    end
+  end
+end
+
+defmodule WcsBot.DiscordCommand.Parties do
+  @moduledoc """
+  Provide the list of parties (as an API through Discord bot).
+
+  """
+  alias WcsBot.DiscordCommand
+  alias WcsBot.Parties
+
+  @application_command_type_string 3
+  @application_command_type_boolean 5
+
+  def create_discord_command("party_list") do
+    %{
+      name: "party_list",
+      description: "Lists upcoming parties. ",
+      options: [
+        %{
+          type: @application_command_type_string,
+          name: "location",
+          description: "by location",
+          choices: [
+            %{
+              name: "by country",
+              value: "country"
+            },
+            %{
+              name: "by city",
+              value: "city"
+            }
+          ],
+          required: false
+        },
+        %{
+          type: @application_command_type_boolean,
+          name: "with_details",
+          description: "With or without details",
+          required: false
+        }
+      ]
+    }
+  end
+
+  def create_discord_command("party_add") do
+    %{
+      name: "party_add",
+      description: "Adds a party. ",
+      options: [
+        %{
+          type: @application_command_type_string,
+          name: "name",
+          description: "Party name",
+          required: true
+        },
+        %{
+          type: @application_command_type_string,
+          name: "city",
+          description: "Party city",
+          required: true
+        },
+        %{
+          type: @application_command_type_string,
+          name: "country",
+          description: "Party country",
+          required: true
+        },
+        %{
+          type: @application_command_type_string,
+          name: "address",
+          description: "Party address",
+          required: true
+        },
+        %{
+          type: @application_command_type_string,
+          name: "description",
+          description: "Party description",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "party_date",
+          description: "Party date",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "begin_hour",
+          description: "Party begin hour",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "end_hour",
+          description: "Party end hour",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "DJ",
+          description: "Party DJ",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "fb_link",
+          description: "Party FB link",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "url_party",
+          description: "Party website URL",
+          required: false
+        }
+      ]
+    }
+  end
+
+  def list_parties(
+        %{
+          interaction: interaction,
+          with_details: with_details
+        } = data_struct
+      ) do
+    list_parties_give_query(data_struct)
+    |> case do
+      [] ->
+        "No parties registered yet on this scope!"
+        |> DiscordCommand.create_interaction_response(interaction)
+
+      party_list ->
+        party_list
+        |> Enum.map(fn
+          party ->
+            (with_details &&
+               "Name: #{party.name}, Party date: #{party.party_date |> date_to_discord_format()}, City: #{party.city}, Country: #{party.country}") ||
+              party.name
+        end)
+        |> DiscordCommand.create_interaction_response(interaction)
+    end
+  end
+
+  defp date_to_discord_format(stupid_date) do
+    unix_time =
+      ((stupid_date |> Date.to_string()) <> "T00:00:00Z")
+      |> DateTime.from_iso8601()
+      |> elem(1)
+      |> DateTime.to_unix()
+
+    "<t:#{unix_time}:D>"
+  end
+
+  defp list_parties_give_query(%{with_country: country}) when country != false do
+    country |> Parties.list_future_small_parties_by_country()
+  end
+
+  defp list_parties_give_query(_), do: Parties.list_small_parties()
+
+  def add_party(%{interaction: interaction, data: %{options: data_list}}) do
+    data_list
+    |> Enum.reduce(%{}, fn %{name: data_field, value: data_value}, map_acc ->
+      map_acc
+      |> Map.put(data_field, data_value)
+    end)
+    |> Parties.create_small_party()
+    |> case do
+      {:ok, party} ->
+        "#{party.name} created !" |> DiscordCommand.create_interaction_response(interaction)
+
+      {:error, %Ecto.Changeset{errors: [{attribute, {error_message, _}} | _]}} ->
+        "Couldn't insert this Party because #{attribute} #{inspect(error_message)}"
         |> DiscordCommand.create_interaction_response(interaction)
     end
   end

@@ -25,10 +25,11 @@ defmodule WcsBotWeb.SmallPartyLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:name]} type="text" label="Name" />
-        <.input field={@form[:date]} type="date" label="Date" />
+        <.input field={@form[:party_date]} type="date" label="Party date" />
         <.input field={@form[:begin_hour]} type="datetime-local" label="Begin hour" />
         <.input field={@form[:end_hour]} type="datetime-local" label="End hour" />
         <.input field={@form[:address]} type="text" label="Address" />
+        <.input field={@form[:city]} type="text" label="City" />
         <.input field={@form[:country]} type="text" label="Country" />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:url_party]} type="text" label="Url party" />
@@ -38,7 +39,7 @@ defmodule WcsBotWeb.SmallPartyLive.FormComponent do
           field={@form[:dance_school_id]}
           type="select"
           options={@dance_schools}
-          prompt="Bind the event to a Dance School"
+          prompt="Bind the party to a Dance School"
           label="Dance schools"
         />
         <:actions>

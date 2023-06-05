@@ -4,10 +4,11 @@ defmodule WcsBot.Repo.Migrations.CreateSmallParties do
   def change do
     create table(:small_parties) do
       add :name, :string
-      add :date, :date
+      add :party_date, :date
       add :begin_hour, :naive_datetime
       add :end_hour, :naive_datetime
       add :address, :string
+      add :city, :string
       add :country, :string
       add :description, :string
       add :url_party, :string

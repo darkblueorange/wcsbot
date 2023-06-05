@@ -5,8 +5,9 @@ defmodule WcsBot.Parties.SmallParty do
   schema "small_parties" do
     field :address, :string
     field :begin_hour, :naive_datetime
+    field :city, :string
     field :country, :string
-    field :date, :date
+    field :party_date, :date
     field :description, :string
     field :dj, :string
     field :end_hour, :naive_datetime
@@ -24,10 +25,11 @@ defmodule WcsBot.Parties.SmallParty do
     small_party
     |> cast(attrs, [
       :name,
-      :date,
+      :party_date,
       :begin_hour,
       :end_hour,
       :address,
+      :city,
       :country,
       :description,
       :url_party,
@@ -37,15 +39,16 @@ defmodule WcsBot.Parties.SmallParty do
     ])
     |> validate_required([
       :name,
-      :date,
+      :party_date,
       :begin_hour,
       :end_hour,
+      :city,
       :address,
-      :country,
-      :description,
-      :url_party,
-      :fb_link,
-      :dj
+      :country
+      # :description,
+      # :url_party,
+      # :fb_link,
+      # :dj
     ])
     |> foreign_key_constraint(:dance_school_id)
   end

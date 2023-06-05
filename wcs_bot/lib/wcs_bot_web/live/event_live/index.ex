@@ -17,7 +17,7 @@ defmodule WcsBotWeb.EventLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Event")
-    |> assign(:event, Parties.get_event!(id))
+    |> assign(:event, Parties.get_event_with_preload!(id))
   end
 
   defp apply_action(socket, :new, _params) do

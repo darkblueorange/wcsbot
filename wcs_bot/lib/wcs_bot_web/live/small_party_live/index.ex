@@ -17,7 +17,7 @@ defmodule WcsBotWeb.SmallPartyLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Small party")
-    |> assign(:small_party, Parties.get_small_party!(id))
+    |> assign(:small_party, Parties.get_small_party_with_preload!(id))
   end
 
   defp apply_action(socket, :new, _params) do

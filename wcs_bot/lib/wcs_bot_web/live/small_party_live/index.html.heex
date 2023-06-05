@@ -13,17 +13,18 @@
   row_click={fn {_id, small_party} -> JS.navigate(~p"/small_parties/#{small_party}") end}
 >
   <:col :let={{_id, small_party}} label="Name"><%= small_party.name %></:col>
-  <:col :let={{_id, small_party}} label="Date"><%= small_party.date %></:col>
+  <:col :let={{_id, small_party}} label="Party date"><%= small_party.party_date %></:col>
   <:col :let={{_id, small_party}} label="Begin hour"><%= small_party.begin_hour %></:col>
   <:col :let={{_id, small_party}} label="End hour"><%= small_party.end_hour %></:col>
   <:col :let={{_id, small_party}} label="Address"><%= small_party.address %></:col>
+  <:col :let={{_id, small_party}} label="City"><%= small_party.city %></:col>
   <:col :let={{_id, small_party}} label="Country"><%= small_party.country %></:col>
   <:col :let={{_id, small_party}} label="Description"><%= small_party.description %></:col>
   <:col :let={{_id, small_party}} label="Url party"><%= small_party.url_party %></:col>
   <:col :let={{_id, small_party}} label="Fb link"><%= small_party.fb_link %></:col>
   <:col :let={{_id, small_party}} label="Dj"><%= small_party.dj %></:col>
-  <:col :let={{_id, event}} label="Dance School">
-    <%= event.dance_school && event.dance_school.name %>
+  <:col :let={{_id, small_party}} label="Dance School">
+    <%= small_party.dance_school && small_party.dance_school.name %>
   </:col>
   <:action :let={{_id, small_party}}>
     <div class="sr-only">
