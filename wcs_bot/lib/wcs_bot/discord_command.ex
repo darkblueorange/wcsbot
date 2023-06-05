@@ -11,6 +11,7 @@ defmodule WcsBot.DiscordCommand do
   # Bot ID is used to ignore our own message
   @bot_id 1_114_822_453_336_756_276
   @guild_id 1_113_880_444_413_419_530
+  @interaction_message_type 4
 
   def handle_msg(%{author: %{id: @bot_id}}), do: :noop
 
@@ -25,7 +26,7 @@ defmodule WcsBot.DiscordCommand do
 
   def handle_interaction(%{data: %{name: "school_list"}} = interaction) do
     Schools.list_schools(%{
-      channel_id: interaction.channel_id,
+      interaction: interaction,
       with_details: find_details(interaction.data.options),
       with_country: find_country(interaction.data.options)
     })
@@ -33,7 +34,7 @@ defmodule WcsBot.DiscordCommand do
 
   def handle_interaction(%{data: %{name: "event_list"}} = interaction) do
     Events.list_events(%{
-      channel_id: interaction.channel_id,
+      interaction: interaction,
       with_details: find_details(interaction.data.options),
       with_country: find_country(interaction.data.options)
     })
@@ -41,14 +42,14 @@ defmodule WcsBot.DiscordCommand do
 
   def handle_interaction(%{data: %{name: "school_add"}} = interaction) do
     Schools.add_school(%{
-      channel_id: interaction.channel_id,
+      interaction: interaction,
       data: interaction.data
     })
   end
 
   def handle_interaction(%{data: %{name: "event_add"}} = interaction) do
     Events.add_event(%{
-      channel_id: interaction.channel_id,
+      interaction: interaction,
       data: interaction.data
     })
   end
@@ -63,6 +64,10 @@ defmodule WcsBot.DiscordCommand do
   defp find_country([_, %{name: "country", value: country}]), do: country
   defp find_country(_), do: false
 
+  @doc """
+  Creates a bot answer to a simple user message (with !).
+
+  """
   def create_message(message, channel_id) when message |> is_list() do
     message_list =
       message
@@ -75,6 +80,31 @@ defmodule WcsBot.DiscordCommand do
   def create_message(message, channel_id) do
     channel_id
     |> Api.create_message(message)
+  end
+
+  @doc """
+  Creates a bot answer.
+  We needs this (instead of create_message/1-2) when it is an "interaction" (user command with /)
+
+  """
+  def create_interaction_response(message, interaction) when message |> is_list() do
+    message_list =
+      message
+      |> Enum.join("\r")
+
+    interaction
+    |> Api.create_interaction_response(%{
+      type: @interaction_message_type,
+      data: %{content: message_list}
+    })
+  end
+
+  def create_interaction_response(message, interaction) do
+    interaction
+    |> Api.create_interaction_response(%{
+      type: @interaction_message_type,
+      data: %{content: message}
+    })
   end
 
   @doc """
@@ -212,7 +242,7 @@ defmodule WcsBot.DiscordCommand.Schools do
 
   def list_schools(
         %{
-          channel_id: channel_id,
+          interaction: interaction,
           with_details: with_details
         } = data_struct
       ) do
@@ -220,7 +250,8 @@ defmodule WcsBot.DiscordCommand.Schools do
     |> case do
       [] ->
         "No schools registered yet on this scope!"
-        |> DiscordCommand.create_message(channel_id)
+        # |> DiscordCommand.create_message(channel_id)
+        |> DiscordCommand.create_interaction_response(interaction)
 
       school_list ->
         school_list
@@ -230,7 +261,7 @@ defmodule WcsBot.DiscordCommand.Schools do
                "Name: #{school.name}, Boss: #{school.boss}, Country: #{school.country}, City: #{school.city}") ||
               school.name
         end)
-        |> DiscordCommand.create_message(channel_id)
+        |> DiscordCommand.create_interaction_response(interaction)
     end
   end
 
@@ -240,7 +271,7 @@ defmodule WcsBot.DiscordCommand.Schools do
 
   defp list_schools_give_query(_), do: Teachings.list_dance_schools()
 
-  def add_school(%{channel_id: channel_id, data: %{options: data_list}}) do
+  def add_school(%{interaction: interaction, data: %{options: data_list}}) do
     data_list
     |> Enum.reduce(%{}, fn %{name: data_field, value: data_value}, map_acc ->
       map_acc
@@ -249,11 +280,12 @@ defmodule WcsBot.DiscordCommand.Schools do
     |> Teachings.create_dance_school()
     |> case do
       {:ok, dance_school} ->
-        "#{dance_school.name} created !" |> DiscordCommand.create_message(channel_id)
+        "#{dance_school.name} created !"
+        |> DiscordCommand.create_interaction_response(interaction)
 
       {:error, %Ecto.Changeset{errors: [{attribute, {error_message, _}} | _]}} ->
         "Couldn't insert this Dance School because #{attribute} #{inspect(error_message)}"
-        |> DiscordCommand.create_message(channel_id)
+        |> DiscordCommand.create_interaction_response(interaction)
     end
   end
 end
@@ -355,7 +387,7 @@ defmodule WcsBot.DiscordCommand.Events do
 
   def list_events(
         %{
-          channel_id: channel_id,
+          interaction: interaction,
           with_details: with_details
         } = data_struct
       ) do
@@ -363,7 +395,7 @@ defmodule WcsBot.DiscordCommand.Events do
     |> case do
       [] ->
         "No events registered yet on this scope!"
-        |> DiscordCommand.create_message(channel_id)
+        |> DiscordCommand.create_interaction_response(interaction)
 
       # https://discord-date.shyked.fr/
       event_list ->
@@ -374,11 +406,10 @@ defmodule WcsBot.DiscordCommand.Events do
                "Name: #{event.name}, Begin date: #{event.begin_date |> date_to_discord_format()}, End date: #{event.end_date |> date_to_discord_format()}, Country: #{event.country}") ||
               event.name
         end)
-        |> DiscordCommand.create_message(channel_id)
+        |> DiscordCommand.create_interaction_response(interaction)
     end
   end
 
-  # 2023-10-16
   defp date_to_discord_format(stupid_date) do
     unix_time =
       ((stupid_date |> Date.to_string()) <> "T00:00:00Z")
@@ -395,7 +426,7 @@ defmodule WcsBot.DiscordCommand.Events do
 
   defp list_events_give_query(_), do: Parties.list_events()
 
-  def add_event(%{channel_id: channel_id, data: %{options: data_list}}) do
+  def add_event(%{interaction: interaction, data: %{options: data_list}}) do
     data_list
     |> Enum.reduce(%{}, fn %{name: data_field, value: data_value}, map_acc ->
       map_acc
@@ -404,11 +435,11 @@ defmodule WcsBot.DiscordCommand.Events do
     |> Parties.create_event()
     |> case do
       {:ok, event} ->
-        "#{event.name} created !" |> DiscordCommand.create_message(channel_id)
+        "#{event.name} created !" |> DiscordCommand.create_interaction_response(interaction)
 
       {:error, %Ecto.Changeset{errors: [{attribute, {error_message, _}} | _]}} ->
         "Couldn't insert this Event because #{attribute} #{inspect(error_message)}"
-        |> DiscordCommand.create_message(channel_id)
+        |> DiscordCommand.create_interaction_response(interaction)
     end
   end
 end
