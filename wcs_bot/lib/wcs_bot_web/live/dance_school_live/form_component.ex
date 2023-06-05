@@ -23,6 +23,9 @@ defmodule WcsBotWeb.DanceSchoolLive.FormComponent do
         <.input field={@form[:city]} type="text" label="City" />
         <.input field={@form[:country]} type="text" label="Country" />
         <.input field={@form[:boss]} type="text" label="Boss" />
+        <.input field={@form[:website_url]} type="text" label="Website URL" />
+        <.input field={@form[:mail]} type="text" label="Mail contact" />
+
         <:actions>
           <.button phx-disable-with="Saving...">Save Dance school</.button>
         </:actions>

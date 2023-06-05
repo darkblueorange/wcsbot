@@ -13,11 +13,18 @@
   <:item title="City"><%= @dance_school.city %></:item>
   <:item title="Country"><%= @dance_school.country %></:item>
   <:item title="Boss"><%= @dance_school.boss %></:item>
+  <:item title="Website URL"><%= @dance_school.website_url %></:item>
+  <:item title="Mail contact"><%= @dance_school.mail %></:item>
 </.list>
 
 <.back navigate={~p"/dance_schools"}>Back to dance_schools</.back>
 
-<.modal :if={@live_action == :edit} id="dance_school-modal" show on_cancel={JS.patch(~p"/dance_schools/#{@dance_school}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="dance_school-modal"
+  show
+  on_cancel={JS.patch(~p"/dance_schools/#{@dance_school}")}
+>
   <.live_component
     module={WcsBotWeb.DanceSchoolLive.FormComponent}
     id={@dance_school.id}

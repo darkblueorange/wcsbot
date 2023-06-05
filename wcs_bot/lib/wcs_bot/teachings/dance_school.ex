@@ -13,6 +13,8 @@ defmodule WcsBot.Teachings.DanceSchool do
     field :city, :string
     field :country, :string
     field :name, :string
+    field :mail, :string
+    field :website_url, :string
 
     # If we delete a dance_school linked to an Event, we this the latter oprhan (instead deleting it: nilify_all instead of the usual delete_all)
     has_many(:events, WcsBot.Parties.Event, on_delete: :nilify_all)
@@ -23,7 +25,7 @@ defmodule WcsBot.Teachings.DanceSchool do
   @doc false
   def changeset(dance_school, attrs) do
     dance_school
-    |> cast(attrs, [:name, :city, :country, :boss])
+    |> cast(attrs, [:name, :city, :country, :boss, :mail, :website_url])
     |> validate_required([:name, :city, :country, :boss])
     |> unique_constraint(:name)
   end

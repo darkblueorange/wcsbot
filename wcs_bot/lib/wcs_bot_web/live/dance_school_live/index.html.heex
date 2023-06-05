@@ -16,6 +16,9 @@
   <:col :let={{_id, dance_school}} label="City"><%= dance_school.city %></:col>
   <:col :let={{_id, dance_school}} label="Country"><%= dance_school.country %></:col>
   <:col :let={{_id, dance_school}} label="Boss"><%= dance_school.boss %></:col>
+  <:col :let={{_id, dance_school}} label="Website URL"><%= dance_school.website_url %></:col>
+  <:col :let={{_id, dance_school}} label="Mail contact"><%= dance_school.mail %></:col>
+
   <:action :let={{_id, dance_school}}>
     <div class="sr-only">
       <.link navigate={~p"/dance_schools/#{dance_school}"}>Show</.link>
@@ -32,7 +35,12 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="dance_school-modal" show on_cancel={JS.patch(~p"/dance_schools")}>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="dance_school-modal"
+  show
+  on_cancel={JS.patch(~p"/dance_schools")}
+>
   <.live_component
     module={WcsBotWeb.DanceSchoolLive.FormComponent}
     id={@dance_school.id || :new}

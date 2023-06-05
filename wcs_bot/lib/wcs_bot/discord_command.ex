@@ -235,6 +235,18 @@ defmodule WcsBot.DiscordCommand.Schools do
           name: "boss",
           description: "School owner",
           required: true
+        },
+        %{
+          type: @application_command_type_string,
+          name: "mail",
+          description: "School mail contact",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "website_url",
+          description: "School website URL",
+          required: false
         }
       ]
     }
@@ -250,7 +262,6 @@ defmodule WcsBot.DiscordCommand.Schools do
     |> case do
       [] ->
         "No schools registered yet on this scope!"
-        # |> DiscordCommand.create_message(channel_id)
         |> DiscordCommand.create_interaction_response(interaction)
 
       school_list ->
