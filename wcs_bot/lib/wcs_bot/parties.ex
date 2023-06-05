@@ -62,6 +62,8 @@ defmodule WcsBot.Parties do
   """
   def get_event!(id), do: Repo.get!(Event, id)
 
+  def get_event_with_preload!(id), do: Repo.get!(Event, id) |> Repo.preload(:dance_school)
+
   @doc """
   Creates a event.
 
@@ -125,5 +127,112 @@ defmodule WcsBot.Parties do
   """
   def change_event(%Event{} = event, attrs \\ %{}) do
     Event.changeset(event, attrs)
+  end
+
+  alias WcsBot.Parties.SmallParty
+
+  @doc """
+  Returns the list of small_parties.
+
+  ## Examples
+
+      iex> list_small_parties()
+      [%SmallParty{}, ...]
+
+  """
+  def list_small_parties do
+    Repo.all(SmallParty)
+  end
+
+  def list_small_parties_with_preload do
+    SmallParty
+    |> Repo.all()
+    |> Repo.preload(:dance_school)
+  end
+
+  @doc """
+  Gets a single small_party.
+
+  Raises `Ecto.NoResultsError` if the Small party does not exist.
+
+  ## Examples
+
+      iex> get_small_party!(123)
+      %SmallParty{}
+
+      iex> get_small_party!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_small_party!(id), do: Repo.get!(SmallParty, id)
+
+  def get_small_party_with_preload!(id),
+    do:
+      Repo.get!(SmallParty, id)
+      |> Repo.preload(:dance_school)
+
+  @doc """
+  Creates a small_party.
+
+  ## Examples
+
+      iex> create_small_party(%{field: value})
+      {:ok, %SmallParty{}}
+
+      iex> create_small_party(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_small_party(attrs \\ %{}) do
+    %SmallParty{}
+    |> SmallParty.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a small_party.
+
+  ## Examples
+
+      iex> update_small_party(small_party, %{field: new_value})
+      {:ok, %SmallParty{}}
+
+      iex> update_small_party(small_party, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_small_party(%SmallParty{} = small_party, attrs) do
+    small_party
+    |> SmallParty.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a small_party.
+
+  ## Examples
+
+      iex> delete_small_party(small_party)
+      {:ok, %SmallParty{}}
+
+      iex> delete_small_party(small_party)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_small_party(%SmallParty{} = small_party) do
+    Repo.delete(small_party)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking small_party changes.
+
+  ## Examples
+
+      iex> change_small_party(small_party)
+      %Ecto.Changeset{data: %SmallParty{}}
+
+  """
+  def change_small_party(%SmallParty{} = small_party, attrs \\ %{}) do
+    SmallParty.changeset(small_party, attrs)
   end
 end

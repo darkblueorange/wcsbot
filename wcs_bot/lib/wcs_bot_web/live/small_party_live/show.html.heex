@@ -1,0 +1,41 @@
+<.header>
+  Small party <%= @small_party.id %>
+  <:subtitle>This is a small_party record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/small_parties/#{@small_party}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit small_party</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @small_party.name %></:item>
+  <:item title="Date"><%= @small_party.date %></:item>
+  <:item title="Begin hour"><%= @small_party.begin_hour %></:item>
+  <:item title="End hour"><%= @small_party.end_hour %></:item>
+  <:item title="Address"><%= @small_party.address %></:item>
+  <:item title="Country"><%= @small_party.country %></:item>
+  <:item title="Description"><%= @small_party.description %></:item>
+  <:item title="Url party"><%= @small_party.url_party %></:item>
+  <:item title="Fb link"><%= @small_party.fb_link %></:item>
+  <:item title="Dj"><%= @small_party.dj %></:item>
+  <:item title="School"><%= @small_party.dance_school && @small_party.dance_school.name %></:item>
+</.list>
+
+<.back navigate={~p"/small_parties"}>Back to small_parties</.back>
+
+<.modal
+  :if={@live_action == :edit}
+  id="small_party-modal"
+  show
+  on_cancel={JS.patch(~p"/small_parties/#{@small_party}")}
+>
+  <.live_component
+    module={WcsBotWeb.SmallPartyLive.FormComponent}
+    id={@small_party.id}
+    title={@page_title}
+    action={@live_action}
+    small_party={@small_party}
+    patch={~p"/small_parties/#{@small_party}"}
+  />
+</.modal>

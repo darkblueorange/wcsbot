@@ -72,4 +72,76 @@ defmodule WcsBot.PartiesTest do
       assert %Ecto.Changeset{} = Parties.change_event(event)
     end
   end
+
+  describe "small_parties" do
+    alias WcsBot.Parties.SmallParty
+
+    import WcsBot.PartiesFixtures
+
+    @invalid_attrs %{address: nil, begin_hour: nil, country: nil, date: nil, description: nil, dj: nil, end_hour: nil, fb_link: nil, name: nil, url_party: nil}
+
+    test "list_small_parties/0 returns all small_parties" do
+      small_party = small_party_fixture()
+      assert Parties.list_small_parties() == [small_party]
+    end
+
+    test "get_small_party!/1 returns the small_party with given id" do
+      small_party = small_party_fixture()
+      assert Parties.get_small_party!(small_party.id) == small_party
+    end
+
+    test "create_small_party/1 with valid data creates a small_party" do
+      valid_attrs = %{address: "some address", begin_hour: ~N[2023-06-04 11:59:00], country: "some country", date: ~D[2023-06-04], description: "some description", dj: "some dj", end_hour: ~N[2023-06-04 11:59:00], fb_link: "some fb_link", name: "some name", url_party: "some url_party"}
+
+      assert {:ok, %SmallParty{} = small_party} = Parties.create_small_party(valid_attrs)
+      assert small_party.address == "some address"
+      assert small_party.begin_hour == ~N[2023-06-04 11:59:00]
+      assert small_party.country == "some country"
+      assert small_party.date == ~D[2023-06-04]
+      assert small_party.description == "some description"
+      assert small_party.dj == "some dj"
+      assert small_party.end_hour == ~N[2023-06-04 11:59:00]
+      assert small_party.fb_link == "some fb_link"
+      assert small_party.name == "some name"
+      assert small_party.url_party == "some url_party"
+    end
+
+    test "create_small_party/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Parties.create_small_party(@invalid_attrs)
+    end
+
+    test "update_small_party/2 with valid data updates the small_party" do
+      small_party = small_party_fixture()
+      update_attrs = %{address: "some updated address", begin_hour: ~N[2023-06-05 11:59:00], country: "some updated country", date: ~D[2023-06-05], description: "some updated description", dj: "some updated dj", end_hour: ~N[2023-06-05 11:59:00], fb_link: "some updated fb_link", name: "some updated name", url_party: "some updated url_party"}
+
+      assert {:ok, %SmallParty{} = small_party} = Parties.update_small_party(small_party, update_attrs)
+      assert small_party.address == "some updated address"
+      assert small_party.begin_hour == ~N[2023-06-05 11:59:00]
+      assert small_party.country == "some updated country"
+      assert small_party.date == ~D[2023-06-05]
+      assert small_party.description == "some updated description"
+      assert small_party.dj == "some updated dj"
+      assert small_party.end_hour == ~N[2023-06-05 11:59:00]
+      assert small_party.fb_link == "some updated fb_link"
+      assert small_party.name == "some updated name"
+      assert small_party.url_party == "some updated url_party"
+    end
+
+    test "update_small_party/2 with invalid data returns error changeset" do
+      small_party = small_party_fixture()
+      assert {:error, %Ecto.Changeset{}} = Parties.update_small_party(small_party, @invalid_attrs)
+      assert small_party == Parties.get_small_party!(small_party.id)
+    end
+
+    test "delete_small_party/1 deletes the small_party" do
+      small_party = small_party_fixture()
+      assert {:ok, %SmallParty{}} = Parties.delete_small_party(small_party)
+      assert_raise Ecto.NoResultsError, fn -> Parties.get_small_party!(small_party.id) end
+    end
+
+    test "change_small_party/1 returns a small_party changeset" do
+      small_party = small_party_fixture()
+      assert %Ecto.Changeset{} = Parties.change_small_party(small_party)
+    end
+  end
 end

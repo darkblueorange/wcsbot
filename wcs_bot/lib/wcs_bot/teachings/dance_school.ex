@@ -18,6 +18,7 @@ defmodule WcsBot.Teachings.DanceSchool do
 
     # If we delete a dance_school linked to an Event, we this the latter oprhan (instead deleting it: nilify_all instead of the usual delete_all)
     has_many(:events, WcsBot.Parties.Event, on_delete: :nilify_all)
+    has_many(:parties, WcsBot.Parties.SmallParty, on_delete: :delete_all)
 
     timestamps()
   end

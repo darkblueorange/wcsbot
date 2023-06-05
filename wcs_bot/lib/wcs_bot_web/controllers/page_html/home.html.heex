@@ -130,7 +130,7 @@
             </span>
           </a>
         </div>
-        toto <br />
+        <br />
         <ul>
           <li>
             <%= Phoenix.HTML.Link.link("Dance schools",
@@ -140,6 +140,11 @@
           <li>
             <%= Phoenix.HTML.Link.link("Events",
               to: WcsBotWeb.Router.Helpers.event_index_path(@conn, :index)
+            ) %>
+          </li>
+          <li>
+            <%= Phoenix.HTML.Link.link("Parties",
+              to: WcsBotWeb.Router.Helpers.small_party_index_path(@conn, :index)
             ) %>
           </li>
           <li>

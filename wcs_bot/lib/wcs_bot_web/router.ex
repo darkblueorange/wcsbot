@@ -27,13 +27,19 @@ defmodule WcsBotWeb.Router do
 
     live "/dance_schools/:id", DanceSchoolLive.Show, :show
     live "/dance_schools/:id/show/edit", DanceSchoolLive.Show, :edit
-    # end
     live "/events", EventLive.Index, :index
     live "/events/new", EventLive.Index, :new
     live "/events/:id/edit", EventLive.Index, :edit
 
     live "/events/:id", EventLive.Show, :show
     live "/events/:id/show/edit", EventLive.Show, :edit
+
+    live "/small_parties", SmallPartyLive.Index, :index
+    live "/small_parties/new", SmallPartyLive.Index, :new
+    live "/small_parties/:id/edit", SmallPartyLive.Index, :edit
+
+    live "/small_parties/:id", SmallPartyLive.Show, :show
+    live "/small_parties/:id/show/edit", SmallPartyLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

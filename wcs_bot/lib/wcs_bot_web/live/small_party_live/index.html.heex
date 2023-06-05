@@ -1,0 +1,60 @@
+<.header>
+  Listing Small parties
+  <:actions>
+    <.link patch={~p"/small_parties/new"}>
+      <.button>New Small party</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="small_parties"
+  rows={@streams.small_parties}
+  row_click={fn {_id, small_party} -> JS.navigate(~p"/small_parties/#{small_party}") end}
+>
+  <:col :let={{_id, small_party}} label="Name"><%= small_party.name %></:col>
+  <:col :let={{_id, small_party}} label="Date"><%= small_party.date %></:col>
+  <:col :let={{_id, small_party}} label="Begin hour"><%= small_party.begin_hour %></:col>
+  <:col :let={{_id, small_party}} label="End hour"><%= small_party.end_hour %></:col>
+  <:col :let={{_id, small_party}} label="Address"><%= small_party.address %></:col>
+  <:col :let={{_id, small_party}} label="Country"><%= small_party.country %></:col>
+  <:col :let={{_id, small_party}} label="Description"><%= small_party.description %></:col>
+  <:col :let={{_id, small_party}} label="Url party"><%= small_party.url_party %></:col>
+  <:col :let={{_id, small_party}} label="Fb link"><%= small_party.fb_link %></:col>
+  <:col :let={{_id, small_party}} label="Dj"><%= small_party.dj %></:col>
+  <:col :let={{_id, event}} label="Dance School">
+    <%= event.dance_school && event.dance_school.name %>
+  </:col>
+  <:action :let={{_id, small_party}}>
+    <div class="sr-only">
+      <.link navigate={~p"/small_parties/#{small_party}"}>Show</.link>
+    </div>
+    <.link patch={~p"/small_parties/#{small_party}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, small_party}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: small_party.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="small_party-modal"
+  show
+  on_cancel={JS.patch(~p"/small_parties")}
+>
+  <.live_component
+    module={WcsBotWeb.SmallPartyLive.FormComponent}
+    id={@small_party.id || :new}
+    title={@page_title}
+    action={@live_action}
+    small_party={@small_party}
+    patch={~p"/small_parties"}
+  />
+</.modal>
+
+<span><.link navigate={WcsBotWeb.Router.Helpers.page_path(@socket, :home)}>Accueil</.link></span>

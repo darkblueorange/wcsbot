@@ -18,11 +18,17 @@
   <:item title="Description"><%= @event.description %></:item>
   <:item title="Url event"><%= @event.url_event %></:item>
   <:item title="Wcsdc"><%= @event.wcsdc %></:item>
+  <:item title="School"><%= @event.dance_school && @event.dance_school.name %></:item>
 </.list>
 
 <.back navigate={~p"/events"}>Back to events</.back>
 
-<.modal :if={@live_action == :edit} id="event-modal" show on_cancel={JS.patch(~p"/events/#{@event}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="event-modal"
+  show
+  on_cancel={JS.patch(~p"/events/#{@event}")}
+>
   <.live_component
     module={WcsBotWeb.EventLive.FormComponent}
     id={@event.id}

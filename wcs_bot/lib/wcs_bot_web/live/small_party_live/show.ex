@@ -1,4 +1,4 @@
-defmodule WcsBotWeb.EventLive.Show do
+defmodule WcsBotWeb.SmallPartyLive.Show do
   use WcsBotWeb, :live_view
 
   alias WcsBot.Parties
@@ -13,9 +13,9 @@ defmodule WcsBotWeb.EventLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:event, Parties.get_event_with_preload!(id))}
+     |> assign(:small_party, Parties.get_small_party_with_preload!(id))}
   end
 
-  defp page_title(:show), do: "Show Event"
-  defp page_title(:edit), do: "Edit Event"
+  defp page_title(:show), do: "Show Small party"
+  defp page_title(:edit), do: "Edit Small party"
 end
