@@ -19,3 +19,5 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 
 ## To Manage VSCode Elixir extension : open .vscode/settings.json
+## To have the Cmd+click working : just install ElixirLS and SOMETIMES just delete .elixir_ls repo
+## (hard way : https://mister11.github.io/posts/fixing_go_to_definition_in_elixir_stdlib/)
