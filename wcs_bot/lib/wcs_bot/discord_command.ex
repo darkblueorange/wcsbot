@@ -7,6 +7,8 @@ defmodule WcsBot.DiscordCommand do
   alias WcsBot.DiscordCommand.{ChitChat, Schools, Events, Parties}
   alias Nostrum.Api
 
+  require Logger
+
   @prefix "!"
   # Bot ID is used to ignore our own message
   @bot_id 1_114_822_453_336_756_276
@@ -128,42 +130,48 @@ defmodule WcsBot.DiscordCommand do
 
   """
   def register_command() do
-    # Nostrum.Api.get_guild_application_commands(@guild_id)
-    # |> elem(1)
-    # |> Enum.each(fn app_cmd ->
-    #   app_cmd.application_id
-    #   |> Nostrum.Api.delete_guild_application_command(app_cmd.guild_id, app_cmd.id)
-    # end)
+    Application.get_env(:nostrum, WcsBot.DiscordCommand)[:register_guild]
+    |> String.to_existing_atom()
+    |> if do
+      Logger.info("Updating and registering commands on Discord server ")
 
-    # Nostrum.Api.create_guild_application_command(
-    #   @guild_id,
-    #   Schools.create_discord_command("school_list")
-    # )
+      Nostrum.Api.get_guild_application_commands(@guild_id)
+      |> elem(1)
+      |> Enum.each(fn app_cmd ->
+        app_cmd.application_id
+        |> Nostrum.Api.delete_guild_application_command(app_cmd.guild_id, app_cmd.id)
+      end)
 
-    # Nostrum.Api.create_guild_application_command(
-    #   @guild_id,
-    #   Events.create_discord_command("event_list")
-    # )
+      Nostrum.Api.create_guild_application_command(
+        @guild_id,
+        Schools.create_discord_command("school_list")
+      )
 
-    # Nostrum.Api.create_guild_application_command(
-    #   @guild_id,
-    #   Parties.create_discord_command("party_list")
-    # )
+      Nostrum.Api.create_guild_application_command(
+        @guild_id,
+        Events.create_discord_command("event_list")
+      )
 
-    # Nostrum.Api.create_guild_application_command(
-    #   @guild_id,
-    #   Schools.create_discord_command("school_add")
-    # )
+      Nostrum.Api.create_guild_application_command(
+        @guild_id,
+        Parties.create_discord_command("party_list")
+      )
 
-    # Nostrum.Api.create_guild_application_command(
-    #   @guild_id,
-    #   Events.create_discord_command("event_add")
-    # )
+      Nostrum.Api.create_guild_application_command(
+        @guild_id,
+        Schools.create_discord_command("school_add")
+      )
 
-    # Nostrum.Api.create_guild_application_command(
-    #   @guild_id,
-    #   Parties.create_discord_command("party_add")
-    # )
+      Nostrum.Api.create_guild_application_command(
+        @guild_id,
+        Events.create_discord_command("event_add")
+      )
+
+      Nostrum.Api.create_guild_application_command(
+        @guild_id,
+        Parties.create_discord_command("party_add")
+      )
+    end
   end
 end
 
