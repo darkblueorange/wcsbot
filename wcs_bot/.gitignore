@@ -20,7 +20,7 @@ erl_crash.dump
 *.ez
 
 # ignore all of ElixirLS files
-*.elixir_ls
+.elixir_ls/
 
 # Temporary files, for example, from tests.
 /tmp/
