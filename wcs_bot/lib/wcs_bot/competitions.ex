@@ -8,6 +8,54 @@ defmodule WcsBot.Competitions do
 
   alias WcsBot.Competitions.StrictlyAsking
 
+  # allow us to query dynamically in a where clause any DB column and its value (country: country_value, or city: city_value)
+  defp query_insert_any(field_name, field_value) do
+    field_value
+    |> if do
+      dynamic([sa], field(sa, ^field_name) == ^field_value)
+    else
+      true
+    end
+  end
+
+  defp query_insert_timeframe(field_name, timeframe_value) do
+    timeframe_value
+    |> case do
+      "week" ->
+        dynamic(
+          [sa, ev],
+          fragment(
+            "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 week')",
+            field(ev, ^field_name),
+            field(ev, ^field_name)
+          )
+        )
+
+      "month" ->
+        dynamic(
+          [sa, ev],
+          fragment(
+            "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 month')",
+            field(ev, ^field_name),
+            field(ev, ^field_name)
+          )
+        )
+
+      "year" ->
+        dynamic(
+          [sa, ev],
+          fragment(
+            "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 year')",
+            field(ev, ^field_name),
+            field(ev, ^field_name)
+          )
+        )
+
+      _ ->
+        true
+    end
+  end
+
   @doc """
   Returns the list of strictly_askings.
 
@@ -23,6 +71,20 @@ defmodule WcsBot.Competitions do
 
   def list_strictly_askings_with_preload do
     StrictlyAsking
+    |> Repo.all()
+    |> Repo.preload(:event)
+  end
+
+  alias WcsBot.Parties.Event
+
+  def list_strictly_askings_by(%{timeframe: timeframe, event_id: event_id}) do
+    interval_lookup = :begin_date |> query_insert_timeframe(timeframe)
+    event_id_lookup = :event_id |> query_insert_any(event_id)
+
+    StrictlyAsking
+    |> join(:left, [sa], ev in Event, on: sa.event_id == ev.id)
+    |> where([sa], ^interval_lookup)
+    |> where([sa], ^event_id_lookup)
     |> Repo.all()
     |> Repo.preload(:event)
   end

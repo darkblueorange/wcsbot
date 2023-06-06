@@ -19,6 +19,9 @@ erl_crash.dump
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
+# ignore all of ElixirLS files
+*.elixir_ls
+
 # Temporary files, for example, from tests.
 /tmp/
 

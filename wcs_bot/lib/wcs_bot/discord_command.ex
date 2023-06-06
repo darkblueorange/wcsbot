@@ -4,7 +4,7 @@ defmodule WcsBot.DiscordCommand do
 
   Will contain every bot command available to user (and admin) in Discord.
   """
-  alias WcsBot.DiscordCommand.{ChitChat, Schools, Events, Parties}
+  alias WcsBot.DiscordCommand.{ChitChat, Schools, Events, Parties, StrictlyAskings}
   alias Nostrum.Api
 
   require Logger
@@ -64,6 +64,18 @@ defmodule WcsBot.DiscordCommand do
     |> Parties.list_parties()
   end
 
+  def handle_interaction(%{data: %{name: "strictly_asking_list"}} = interaction) do
+    %{
+      interaction: interaction,
+      with_details: find_recursive("with_details", interaction.data.options),
+      queryable: %{
+        event_id: find_recursive("by_event", interaction.data.options),
+        timeframe: find_recursive("timeframe", interaction.data.options)
+      }
+    }
+    |> StrictlyAskings.list_strictly_askings()
+  end
+
   def handle_interaction(%{data: %{name: "school_add"}} = interaction) do
     Schools.add_school(%{
       interaction: interaction,
@@ -80,6 +92,13 @@ defmodule WcsBot.DiscordCommand do
 
   def handle_interaction(%{data: %{name: "party_add"}} = interaction) do
     Parties.add_party(%{
+      interaction: interaction,
+      data: interaction.data
+    })
+  end
+
+  def handle_interaction(%{data: %{name: "strictly_asking_add"}} = interaction) do
+    StrictlyAskings.add_strictly_asking(%{
       interaction: interaction,
       data: interaction.data
     })
@@ -184,6 +203,11 @@ defmodule WcsBot.DiscordCommand do
 
       Nostrum.Api.create_guild_application_command(
         @guild_id,
+        StrictlyAskings.create_discord_command("strictly_asking_list")
+      )
+
+      Nostrum.Api.create_guild_application_command(
+        @guild_id,
         Schools.create_discord_command("school_add")
       )
 
@@ -195,6 +219,11 @@ defmodule WcsBot.DiscordCommand do
       Nostrum.Api.create_guild_application_command(
         @guild_id,
         Parties.create_discord_command("party_add")
+      )
+
+      Nostrum.Api.create_guild_application_command(
+        @guild_id,
+        StrictlyAskings.create_discord_command("strictly_asking_add")
       )
     end
   end
@@ -714,6 +743,161 @@ defmodule WcsBot.DiscordCommand.Parties do
 
       {:error, %Ecto.Changeset{errors: [{attribute, {error_message, _}} | _]}} ->
         "Couldn't insert this Party because #{attribute} #{inspect(error_message)}"
+        |> DiscordCommand.create_interaction_response(interaction)
+    end
+  end
+end
+
+defmodule WcsBot.DiscordCommand.StrictlyAskings do
+  @moduledoc """
+  Provide the list of strictly_askings (as an API through Discord bot).
+
+  """
+  alias WcsBot.DiscordCommand
+  alias WcsBot.Competitions
+  require Logger
+
+  @application_command_type_string 3
+  @application_command_type_boolean 5
+
+  def create_discord_command("strictly_asking_list") do
+    %{
+      name: "strictly_asking_list",
+      description: "Lists pending strictly askings. ",
+      options: [
+        %{
+          type: @application_command_type_string,
+          name: "timeframe",
+          description: "timeframe",
+          choices: [
+            %{
+              name: "in the coming week",
+              value: "week"
+            },
+            %{
+              name: "in the coming month",
+              value: "month"
+            },
+            %{
+              name: "in the coming year",
+              value: "year"
+            }
+          ],
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "by_event",
+          description: "by event",
+          required: false
+        },
+        %{
+          type: @application_command_type_boolean,
+          name: "with_details",
+          description: "With or without details",
+          required: false
+        }
+      ]
+    }
+  end
+
+  def create_discord_command("strictly_asking_add") do
+    %{
+      name: "strictly_asking_add",
+      description: "Adds a strictly_asking. ",
+      options: [
+        %{
+          type: @application_command_type_string,
+          name: "name",
+          description: "Asker name",
+          required: true
+        },
+        %{
+          type: @application_command_type_string,
+          name: "wcsdc_level",
+          description: "Asker WCSDC level",
+          required: true
+        },
+        %{
+          type: @application_command_type_string,
+          name: "dancing_role",
+          description: "Asker dancing role",
+          required: true
+        },
+        %{
+          type: @application_command_type_string,
+          name: "party_date",
+          description: "Party date",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "description",
+          description: "Asking 'fun' (or not) description",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "event",
+          description: "Event",
+          required: true
+        }
+      ]
+    }
+  end
+
+  def list_strictly_askings(%{
+        interaction: interaction,
+        with_details: with_details,
+        queryable: queryable
+      }) do
+    queryable
+    |> list_strictly_askings_give_query()
+    |> case do
+      [] ->
+        "No strictly_asking registered yet on this scope!"
+        |> DiscordCommand.create_interaction_response(interaction)
+
+      strictly_asking_list ->
+        strictly_asking_list
+        |> Enum.map(fn
+          strictly_asking ->
+            (with_details &&
+               "Name: #{strictly_asking.name}, Event: #{strictly_asking.event.name}, Event date: #{strictly_asking.event.begin_date |> date_to_discord_format()}") ||
+              strictly_asking.name
+        end)
+        |> DiscordCommand.create_interaction_response(interaction)
+    end
+  end
+
+  defp date_to_discord_format(stupid_date) do
+    unix_time =
+      ((stupid_date |> Date.to_string()) <> "T00:00:00Z")
+      |> DateTime.from_iso8601()
+      |> elem(1)
+      |> DateTime.to_unix()
+
+    "<t:#{unix_time}:D>"
+  end
+
+  defp list_strictly_askings_give_query(queryable) do
+    queryable |> Competitions.list_strictly_askings_by()
+  end
+
+  def add_strictly_asking(%{interaction: interaction, data: %{options: data_list}}) do
+    data_list
+    |> Enum.reduce(%{}, fn %{name: data_field, value: data_value}, map_acc ->
+      map_acc
+      |> Map.put(data_field, data_value)
+    end)
+    |> Competitions.create_strictly_asking()
+    |> case do
+      {:ok, strictly_asking} ->
+        "Strictly asking for #{strictly_asking.name} created !"
+        |> DiscordCommand.create_interaction_response(interaction)
+
+      {:error, %Ecto.Changeset{errors: [{attribute, {error_message, _}} | _]}} ->
+        "Couldn't insert this Strictly asking because #{attribute} #{inspect(error_message)}"
         |> DiscordCommand.create_interaction_response(interaction)
     end
   end
