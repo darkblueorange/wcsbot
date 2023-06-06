@@ -27,16 +27,15 @@ defmodule WcsBot.Parties do
     |> Repo.all()
   end
 
-  def list_events_by_country(country) do
-    Event
-    |> where([ev], ev.country == ^country)
-    |> Repo.all()
-  end
+  def list_events_by(%{timeframe: timeframe, country: country, city: city}) do
+    interval_lookup = :begin_date |> query_insert_timeframe(timeframe)
+    country_lookup = :country |> query_insert_any(country)
+    city_lookup = :city |> query_insert_any(city)
 
-  def list_future_events_by_country(country) do
     Event
-    |> where([ev], ev.country == ^country)
-    |> where([ev], fragment(" ? > CURRENT_DATE", ev.end_date))
+    |> where([sp], ^interval_lookup)
+    |> where([sp], ^country_lookup)
+    |> where([sp], ^city_lookup)
     |> Repo.all()
   end
 
@@ -154,54 +153,37 @@ defmodule WcsBot.Parties do
   timeframe = week, month, year
   """
   def list_small_parties_by(%{timeframe: timeframe, country: country, city: city}) do
-    interval_lookup = timeframe |> query_insert_timeframe()
-    country_lookup = country |> query_insert_country()
-    city_lookup = city |> query_insert_city()
+    interval_lookup = :party_date |> query_insert_timeframe(timeframe)
+    country_lookup = :country |> query_insert_any(country)
+    city_lookup = :city |> query_insert_any(city)
 
     SmallParty
-    |> where(
-      [sp],
-      ^interval_lookup
-    )
-    |> where(
-      [sp],
-      ^country_lookup
-    )
-    |> where(
-      [sp],
-      ^city_lookup
-    )
+    |> where([sp], ^interval_lookup)
+    |> where([sp], ^country_lookup)
+    |> where([sp], ^city_lookup)
     |> Repo.all()
   end
 
-  defp query_insert_city(city) do
-    city
+  # allow us to query dynamically in a where clause any DB column and its value (country: country_value, or city: city_value)
+  defp query_insert_any(field_name, field_value) do
+    field_value
     |> if do
-      dynamic([sp], sp.city == ^city)
+      dynamic([sp], field(sp, ^field_name) == ^field_value)
     else
       true
     end
   end
 
-  defp query_insert_country(country) do
-    country
-    |> if do
-      dynamic([sp], sp.country == ^country)
-    else
-      true
-    end
-  end
-
-  defp query_insert_timeframe(timeframe) do
-    timeframe
+  defp query_insert_timeframe(field_name, timeframe_value) do
+    timeframe_value
     |> case do
       "week" ->
         dynamic(
           [sp],
           fragment(
             "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 week')",
-            sp.party_date,
-            sp.party_date
+            field(sp, ^field_name),
+            field(sp, ^field_name)
           )
         )
 
@@ -210,8 +192,8 @@ defmodule WcsBot.Parties do
           [sp],
           fragment(
             "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 month')",
-            sp.party_date,
-            sp.party_date
+            field(sp, ^field_name),
+            field(sp, ^field_name)
           )
         )
 
@@ -220,8 +202,8 @@ defmodule WcsBot.Parties do
           [sp],
           fragment(
             "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 year')",
-            sp.party_date,
-            sp.party_date
+            field(sp, ^field_name),
+            field(sp, ^field_name)
           )
         )
 

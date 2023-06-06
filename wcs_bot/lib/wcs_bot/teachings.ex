@@ -8,6 +8,16 @@ defmodule WcsBot.Teachings do
 
   alias WcsBot.Teachings.DanceSchool
 
+  # allow us to query dynamically in a where clause any DB column and its value (country: country_value, or city: city_value)
+  defp query_insert_any(field_name, field_value) do
+    field_value
+    |> if do
+      dynamic([sp], field(sp, ^field_name) == ^field_value)
+    else
+      true
+    end
+  end
+
   @doc """
   Returns the list of dance_schools.
 
@@ -21,9 +31,13 @@ defmodule WcsBot.Teachings do
     Repo.all(DanceSchool)
   end
 
-  def list_dance_schools_by_country(country) do
+  def list_dance_schools_by(%{country: country, city: city}) do
+    country_lookup = :country |> query_insert_any(country)
+    city_lookup = :city |> query_insert_any(city)
+
     DanceSchool
-    |> where([dc], dc.country == ^country)
+    |> where([sp], ^country_lookup)
+    |> where([sp], ^city_lookup)
     |> Repo.all()
   end
 

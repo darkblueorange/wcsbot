@@ -1,4 +1,10 @@
 defmodule WcsBot.Parties.SmallParty do
+  @moduledoc """
+  Parties.SmallParty schema. Represents an party (a small, regular one, by opposition to an Event).
+  Is optionally (often) linked to a DanceSchool
+
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -45,10 +51,6 @@ defmodule WcsBot.Parties.SmallParty do
       :city,
       :address,
       :country
-      # :description,
-      # :url_party,
-      # :fb_link,
-      # :dj
     ])
     |> foreign_key_constraint(:dance_school_id)
   end
