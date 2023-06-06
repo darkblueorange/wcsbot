@@ -506,6 +506,26 @@ defmodule WcsBot.DiscordCommand.Parties do
       options: [
         %{
           type: @application_command_type_string,
+          name: "timeframe",
+          description: "timeframe",
+          choices: [
+            %{
+              name: "in the week",
+              value: "week"
+            },
+            %{
+              name: "in the month",
+              value: "month"
+            },
+            %{
+              name: "in the year",
+              value: "year"
+            }
+          ],
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
           name: "location",
           description: "by location",
           choices: [
