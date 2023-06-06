@@ -43,11 +43,14 @@ defmodule WcsBot.DiscordCommand do
   end
 
   def handle_interaction(%{data: %{name: "party_list"}} = interaction) do
-    Parties.list_parties(%{
+    %{
       interaction: interaction,
-      with_details: find_details(interaction.data.options),
-      with_country: find_country(interaction.data.options)
-    })
+      with_details: find_recursive("with_details", interaction.data.options),
+      country: find_recursive("with_country", interaction.data.options),
+      city: find_recursive("with_city", interaction.data.options),
+      timeframe: find_recursive("timeframe", interaction.data.options)
+    }
+    |> Parties.list_parties()
   end
 
   def handle_interaction(%{data: %{name: "school_add"}} = interaction) do
@@ -80,6 +83,25 @@ defmodule WcsBot.DiscordCommand do
   defp find_country([%{name: "country", value: country} | _]), do: country
   defp find_country([_, %{name: "country", value: country}]), do: country
   defp find_country(_), do: false
+
+  # We receive a data_list of the form
+  # [_ | %{name: "country", value: country} | _]
+  # we return the value of the country if we have that key given
+  defp find_recursive(_, nil), do: false
+
+  defp find_recursive(data_elem, data_list) do
+    data_list
+    |> Enum.find_value(fn %{name: lookup_key, value: lookup_value} ->
+      (lookup_key == data_elem)
+      |> if do
+        lookup_value
+      end
+    end)
+    |> case do
+      nil -> false
+      val -> val
+    end
+  end
 
   @doc """
   Creates a bot answer to a simple user message (with !).
@@ -659,7 +681,11 @@ defmodule WcsBot.DiscordCommand.Parties do
     "<t:#{unix_time}:D>"
   end
 
-  defp list_parties_give_query(%{with_country: country}) when country != false do
+  defp list_parties_give_query(%{timeframe: timeframe}) when timeframe != false do
+    timeframe |> Parties.list_timeframe_small_parties()
+  end
+
+  defp list_parties_give_query(%{country: country}) when country != false do
     country |> Parties.list_future_small_parties_by_country()
   end
 
