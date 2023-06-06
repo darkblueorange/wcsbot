@@ -150,57 +150,84 @@ defmodule WcsBot.Parties do
     |> Repo.preload(:dance_school)
   end
 
-  def list_future_small_parties_by_country(country) do
-    SmallParty
-    |> where([sp], sp.country == ^country)
-    |> where([sp], fragment(" ? > CURRENT_DATE", sp.end_date))
-    |> Repo.all()
-  end
-
   @doc """
   timeframe = week, month, year
   """
-  def list_timeframe_small_parties(timeframe) do
-    interval_lookup =
-      timeframe
-      |> case do
-        "week" ->
-          dynamic(
-            [sp],
-            fragment(
-              "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 week')",
-              sp.party_date,
-              sp.party_date
-            )
-          )
-
-        "month" ->
-          dynamic(
-            [sp],
-            fragment(
-              "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 month')",
-              sp.party_date,
-              sp.party_date
-            )
-          )
-
-        "year" ->
-          dynamic(
-            [sp],
-            fragment(
-              "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 year')",
-              sp.party_date,
-              sp.party_date
-            )
-          )
-      end
+  def list_small_parties_by(%{timeframe: timeframe, country: country, city: city}) do
+    interval_lookup = timeframe |> query_insert_timeframe()
+    country_lookup = country |> query_insert_country()
+    city_lookup = city |> query_insert_city()
 
     SmallParty
     |> where(
       [sp],
       ^interval_lookup
     )
+    |> where(
+      [sp],
+      ^country_lookup
+    )
+    |> where(
+      [sp],
+      ^city_lookup
+    )
     |> Repo.all()
+  end
+
+  defp query_insert_city(city) do
+    city
+    |> if do
+      dynamic([sp], sp.city == ^city)
+    else
+      true
+    end
+  end
+
+  defp query_insert_country(country) do
+    country
+    |> if do
+      dynamic([sp], sp.country == ^country)
+    else
+      true
+    end
+  end
+
+  defp query_insert_timeframe(timeframe) do
+    timeframe
+    |> case do
+      "week" ->
+        dynamic(
+          [sp],
+          fragment(
+            "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 week')",
+            sp.party_date,
+            sp.party_date
+          )
+        )
+
+      "month" ->
+        dynamic(
+          [sp],
+          fragment(
+            "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 month')",
+            sp.party_date,
+            sp.party_date
+          )
+        )
+
+      "year" ->
+        dynamic(
+          [sp],
+          fragment(
+            "CURRENT_DATE <= ? AND ? <= (CURRENT_DATE + INTERVAL '1 year')",
+            sp.party_date,
+            sp.party_date
+          )
+        )
+
+      _ ->
+        true
+    end
   end
 
   @doc """

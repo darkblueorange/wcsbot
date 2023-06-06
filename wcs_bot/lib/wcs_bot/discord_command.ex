@@ -46,9 +46,11 @@ defmodule WcsBot.DiscordCommand do
     %{
       interaction: interaction,
       with_details: find_recursive("with_details", interaction.data.options),
-      country: find_recursive("with_country", interaction.data.options),
-      city: find_recursive("with_city", interaction.data.options),
-      timeframe: find_recursive("timeframe", interaction.data.options)
+      queryable: %{
+        country: find_recursive("by_country", interaction.data.options),
+        city: find_recursive("by_city", interaction.data.options),
+        timeframe: find_recursive("timeframe", interaction.data.options)
+      }
     }
     |> Parties.list_parties()
   end
@@ -517,6 +519,7 @@ defmodule WcsBot.DiscordCommand.Parties do
   """
   alias WcsBot.DiscordCommand
   alias WcsBot.Parties
+  require Logger
 
   @application_command_type_string 3
   @application_command_type_boolean 5
@@ -532,15 +535,15 @@ defmodule WcsBot.DiscordCommand.Parties do
           description: "timeframe",
           choices: [
             %{
-              name: "in the week",
+              name: "in the coming week",
               value: "week"
             },
             %{
-              name: "in the month",
+              name: "in the coming month",
               value: "month"
             },
             %{
-              name: "in the year",
+              name: "in the coming year",
               value: "year"
             }
           ],
@@ -548,18 +551,14 @@ defmodule WcsBot.DiscordCommand.Parties do
         },
         %{
           type: @application_command_type_string,
-          name: "location",
-          description: "by location",
-          choices: [
-            %{
-              name: "by country",
-              value: "country"
-            },
-            %{
-              name: "by city",
-              value: "city"
-            }
-          ],
+          name: "by_country",
+          description: "location by country",
+          required: false
+        },
+        %{
+          type: @application_command_type_string,
+          name: "by_city",
+          description: "location by city",
           required: false
         },
         %{
@@ -647,13 +646,13 @@ defmodule WcsBot.DiscordCommand.Parties do
     }
   end
 
-  def list_parties(
-        %{
-          interaction: interaction,
-          with_details: with_details
-        } = data_struct
-      ) do
-    list_parties_give_query(data_struct)
+  def list_parties(%{
+        interaction: interaction,
+        with_details: with_details,
+        queryable: queryable
+      }) do
+    queryable
+    |> list_parties_give_query()
     |> case do
       [] ->
         "No parties registered yet on this scope!"
@@ -681,15 +680,10 @@ defmodule WcsBot.DiscordCommand.Parties do
     "<t:#{unix_time}:D>"
   end
 
-  defp list_parties_give_query(%{timeframe: timeframe}) when timeframe != false do
-    timeframe |> Parties.list_timeframe_small_parties()
+  defp list_parties_give_query(queryable) do
+    Logger.info("timeframe |> Parties.list_timeframe_small_parties()")
+    queryable |> Parties.list_small_parties_by()
   end
-
-  defp list_parties_give_query(%{country: country}) when country != false do
-    country |> Parties.list_future_small_parties_by_country()
-  end
-
-  defp list_parties_give_query(_), do: Parties.list_small_parties()
 
   def add_party(%{interaction: interaction, data: %{options: data_list}}) do
     data_list
