@@ -9,7 +9,6 @@ mix phx.gen.live Parties SmallParty small_parties name:string party_date:date be
 
 ToDo: 
 - look for an insertion of the schools through the event (or change relation, and attach to a string with "organizer", would be simpler)
-- add timeframe lookup
 
 Later: 
 - implement too many results retrieval mgmt
@@ -22,3 +21,7 @@ Much later:
 - implement WCS tips
 - implement private classes reservation (and teacher asking) => to think a little bit more
 - implement video of the day
+
+
+Ops regards: 
+- https://damonvjanis.medium.com/optimizing-for-free-hosting-elixir-deployments-6bfc119a1f44
