@@ -7,6 +7,8 @@ mix phx.gen.live Parties Event events name:string begin_date:date end_date:date 
 
 mix phx.gen.live Parties SmallParty small_parties name:string party_date:date begin_hour:datetime end_hour:datetime address:string country:string description:string url_party:string fb_link:string dj:string dance_school_id:references:dance_schools
 
+mix phx.gen.live Competitions StricltyAsking striclty_askings name:string wcsdc_level:string event_id:references:events description:string asking_filled:boolean dancing_role discord_tag:string
+
 ToDo: 
 - look for an insertion of the schools through the event (or change relation, and attach to a string with "organizer", would be simpler)
 

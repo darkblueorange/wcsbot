@@ -45,6 +45,12 @@ defmodule WcsBot.Parties do
     |> Repo.preload([:dance_school])
   end
 
+  def list_events_tuple_form do
+    Event
+    |> select([ev], {ev.name, ev.id})
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single event.
 

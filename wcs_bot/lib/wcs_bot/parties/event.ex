@@ -19,6 +19,7 @@ defmodule WcsBot.Parties.Event do
     field :wcsdc, :boolean, default: false
 
     belongs_to(:dance_school, WcsBot.Teachings.DanceSchool)
+    has_many(:strictly_askings, WcsBot.Competitions.StrictlyAsking, on_delete: :delete_all)
 
     timestamps()
   end

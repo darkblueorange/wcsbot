@@ -40,6 +40,13 @@ defmodule WcsBotWeb.Router do
 
     live "/small_parties/:id", SmallPartyLive.Show, :show
     live "/small_parties/:id/show/edit", SmallPartyLive.Show, :edit
+
+    live "/strictly_askings", StrictlyAskingLive.Index, :index
+    live "/strictly_askings/new", StrictlyAskingLive.Index, :new
+    live "/strictly_askings/:id/edit", StrictlyAskingLive.Index, :edit
+
+    live "/strictly_askings/:id", StrictlyAskingLive.Show, :show
+    live "/strictly_askings/:id/show/edit", StrictlyAskingLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

@@ -143,6 +143,11 @@
             ) %>
           </li>
           <li>
+            <%= Phoenix.HTML.Link.link("Strictly Askings",
+              to: WcsBotWeb.Router.Helpers.strictly_asking_index_path(@conn, :index)
+            ) %>
+          </li>
+          <li>
             <%= Phoenix.HTML.Link.link("Parties",
               to: WcsBotWeb.Router.Helpers.small_party_index_path(@conn, :index)
             ) %>

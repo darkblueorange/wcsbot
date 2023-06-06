@@ -1,0 +1,68 @@
+<.header>
+  Listing Strictly askings
+  <:actions>
+    <.link patch={~p"/strictly_askings/new"}>
+      <.button>New Strictly asking</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="strictly_askings"
+  rows={@streams.strictly_askings}
+  row_click={
+    fn {_id, strictly_asking} -> JS.navigate(~p"/strictly_askings/#{strictly_asking}") end
+  }
+>
+  <:col :let={{_id, strictly_asking}} label="Name"><%= strictly_asking.name %></:col>
+  <:col :let={{_id, strictly_asking}} label="Wcsdc level">
+    <%= strictly_asking.wcsdc_level %>
+  </:col>
+  <:col :let={{_id, strictly_asking}} label="Description">
+    <%= strictly_asking.description %>
+  </:col>
+  <:col :let={{_id, strictly_asking}} label="Asking filled">
+    <%= strictly_asking.asking_filled %>
+  </:col>
+  <:col :let={{_id, strictly_asking}} label="Dancing role">
+    <%= strictly_asking.dancing_role %>
+  </:col>
+  <:col :let={{_id, strictly_asking}} label="Discord tag">
+    <%= strictly_asking.discord_tag %>
+  </:col>
+  <:col :let={{_id, strictly_asking}} label="Event">
+    <%= strictly_asking.event && strictly_asking.event.name %> - <%= strictly_asking.event &&
+      strictly_asking.event.begin_date %>
+  </:col>
+  <:action :let={{_id, strictly_asking}}>
+    <div class="sr-only">
+      <.link navigate={~p"/strictly_askings/#{strictly_asking}"}>Show</.link>
+    </div>
+    <.link patch={~p"/strictly_askings/#{strictly_asking}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, strictly_asking}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: strictly_asking.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="strictly_asking-modal"
+  show
+  on_cancel={JS.patch(~p"/strictly_askings")}
+>
+  <.live_component
+    module={WcsBotWeb.StrictlyAskingLive.FormComponent}
+    id={@strictly_asking.id || :new}
+    title={@page_title}
+    action={@live_action}
+    strictly_asking={@strictly_asking}
+    patch={~p"/strictly_askings"}
+  />
+</.modal>
+<span><.link navigate={WcsBotWeb.Router.Helpers.page_path(@socket, :home)}>Accueil</.link></span>
